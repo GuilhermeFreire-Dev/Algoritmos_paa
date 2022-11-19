@@ -1,2 +1,4 @@
 #Ignorar todos os arquivos .exe
 *.exe
+#Ignorar diretório de configurações do vs code
+.vscode/
