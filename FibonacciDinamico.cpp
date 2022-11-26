@@ -81,4 +81,6 @@ void runFibonacci(int n)
 int main() 
 {
     runFibonacci(92);
+
+    return EXIT_SUCCESS;
 }

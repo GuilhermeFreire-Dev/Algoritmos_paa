@@ -42,4 +42,6 @@ void runFibonacci(int n)
 int main()
 {
     runFibonacci(100);
+
+    return EXIT_SUCCESS;
 }
