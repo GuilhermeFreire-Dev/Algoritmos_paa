@@ -1,118 +1,115 @@
-/*
-    Algoritmo de Kruskal para obter o caminho mínimo em um grafo conexo
-*/
-
 #include <iostream>
-#include <vector>
-#include <unordered_map>
 #include <algorithm>
+#include <ctime>
+
 using namespace std;
- 
-// Estrutura de dados para armazenar uma aresta do grafo
-struct Edge {
-    int src, dest, weight;
-};
- 
-// Objeto de comparação a ser usado para ordenar as arestas
-struct compare
-{
-    bool operator() (Edge const &a, Edge const &b) const {
-        return a.weight > b.weight;
-    }
-};
- 
-// Classe para representar um conjunto disjunto
-class DisjointSet
-{
-    unordered_map<int, int> parent;
- 
-public:
 
-    void makeSet(int n)
-    {
-        // Cria n conjuntos disjuntos (um para cada vértice)
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
-        }
-    }
- 
-    // Encontra a raiz do conjunto ao qual pertence o elemento k
-    int Find(int k)
-    {
-        // Se k for root
-        if (parent[k] == k) {
-            return k;
-        }
- 
-        //Recorre para o pai até encontrarmos a raiz
-        return Find(parent[k]);
-    }
- 
-    // Realiza união de dois subconjuntos
-    void Union(int a, int b)
-    {
-        // Encontra a raiz dos conjuntos em que os elementos
-        // x e y pertencem
-        int x = Find(a);
-        int y = Find(b);
- 
-        parent[x] = y;
-    }
+struct t_aresta{
+    int dis;
+    int x, y;
 };
- 
-// Função para construir MST usando o algoritmo de Kruskal
-vector<Edge> runKruskalAlgorithm(vector<Edge> edges, int n)
-{
-    // Armazena as arestas presentes no MST
-    vector<Edge> MST;
 
-    DisjointSet ds;
- 
-    // Cria um conjunto singleton para cada elemento do universo
-    ds.makeSet(n);
- 
-    // classifica as arestas aumentando o peso
-    sort(edges.begin(), edges.end(), compare());
- 
-    // MST contém exatamente arestas V-1
-    while (MST.size() != n - 1)
-    {
-        // Considera a próxima aresta com peso mínimo do gráfico
-        Edge next_edge = edges.back();
-        edges.pop_back();
- 
-        int x = ds.Find(next_edge.src);
-        int y = ds.Find(next_edge.dest);
- 
-        if (x != y)
-        {
-            MST.push_back(next_edge);
-            ds.Union(x, y);
-        }
-    }
-    return MST;
+bool comp(t_aresta a, t_aresta b){ return a.dis < b.dis; }
+
+//--------------------
+#define MAXN 50500
+#define MAXM 200200
+
+int n, m; // número de vértices e arestas
+t_aresta aresta[MAXM];
+
+// para o union find
+int pai[MAXN];
+int peso[MAXN];
+
+// a árvore
+t_aresta mst[MAXM];
+//--------------------
+
+// funções do union find
+int find(int x){
+    if(pai[x] == x) return x;
+    return pai[x] = find(pai[x]);
 }
- 
-int main()
-{
-    vector<Edge> edges =
-    {
-        // (u, v, w), (u, v) aresta, (w) peso
-        {0, 1, 5558}, {0, 2, 3469}, {0, 3, 214}, {0, 4, 5074}, {0, 5, 5959}, {1, 0, 5588},
-        {1, 2, 2090}, {1, 3, 5725}, {1, 4, 7753}, {1, 5, 7035}, {2, 3, 3636}, {2, 4, 6844}, 
-        {2, 5, 6757}, {3, 4, 5120}, {3, 5, 6053}, {4, 5, 1307}
-    };
- 
-    // número total de nós no grafo
-    int n = 6;
- 
-    // constrói o grafo
-    vector<Edge> e = runKruskalAlgorithm(edges, n);
- 
-    for (Edge &edge: e)
-    {
-        cout << "(" << edge.src << ", " << edge.dest << ", "
-             << edge.weight << ")" << endl;
+
+void join(int a, int b){
+    
+    a = find(a);
+    b = find(b);
+    
+    if(peso[a] < peso[b]) pai[a] = b;
+    else if(peso[b] < peso[a]) pai[b] = a;
+    else{
+        pai[a] = b;
+        peso[b]++;
     }
+    
+}
+
+int main(){
+    
+    time_t instante;
+    double tempoTotal = 0;
+    int count = 0;
+
+    // ler a entrada
+    cin >> n >> m;
+    
+    for(int i = 1;i <= m;i++)
+        cin >> aresta[i].x >> aresta[i].y >> aresta[i].dis;
+    
+    do
+    {
+        instante = clock();
+        // inicializar os pais para o union-find
+        for(int i = 1;i <= n;i++) pai[i] = i;
+        
+        // ordenar as arestas
+        sort(aresta+1, aresta+m+1, comp);
+        
+        int size = 0;
+        for(int i = 1;i <= m;i++){
+            
+            if( find(aresta[i].x) != find(aresta[i].y) ){ // se estiverem em componentes distintas
+                join(aresta[i].x, aresta[i].y);
+                
+                mst[++size] = aresta[i];
+            }
+            
+        }
+        instante = clock() - instante;
+        count++;
+        tempoTotal += (double)(instante / (CLOCKS_PER_SEC/1000));
+        tempoTotal /= count;
+
+    } while (tempoTotal <= 0);
+    
+    // imprimir a MST
+    cout << endl;
+    
+    for(int i = 1;i < n;i++) cout << mst[i].x << " " << mst[i].y << " " << mst[i].dis << "\n";
+
+    printf("Algoritmo de Kruskal.\nTempo decorrido: %fms.\n", tempoTotal);
+    
     return 0;
 }
+
+/*
+Grafo de exemplo
+6 15
+0 1 3469
+0 2 5558
+0 3 5959
+0 4 214
+0 5 5074
+1 2 2090
+1 3 6757
+1 4 3636
+1 5 6844
+2 3 7035
+2 4 5725
+2 5 7753
+3 4 6053
+3 5 1307
+4 5 5120
+*/
