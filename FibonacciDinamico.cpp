@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <vector>
-#include <time.h>
 
 using namespace std;
 
@@ -51,36 +50,16 @@ public:
     }
 };
 
-double tempoDecorrido(time_t tempo)
-{
-    return (double)(tempo/(CLOCKS_PER_SEC/1000));
-}
-
 void runFibonacci(int n)
 {
     Fibonacci fibonacci;
-    time_t tempo;
-    double tempoTotal = 0;
-    long long fib;
-    int count = 0;
 
-    do
-    {
-        tempo = clock();
-        fib = fibonacci.getFibonacci(n);
-        tempo = clock() - tempo;
-        count++;
-        tempoTotal += tempoDecorrido(tempo) / count;
-
-    } while (tempoTotal <= 0);
-
-    printf("Fibonacci(%d): %lld\n", n, fib);
-    printf("Tempo decorrido: %fms.", tempoTotal);
+    printf("Fibonacci(%d): %lld\n", n, fibonacci.getFibonacci(n));
 }
 
 int main() 
 {
-    runFibonacci(92);
+    runFibonacci(10);
 
     return EXIT_SUCCESS;
 }

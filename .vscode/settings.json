@@ -1,5 +1,12 @@
 {
     "files.associations": {
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "iterator": "cpp",
+        "xutility": "cpp",
+        "xloctime": "cpp",
+        "xhash": "cpp",
+        "iosfwd": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp"
     }
 }
